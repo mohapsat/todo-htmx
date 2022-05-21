@@ -3,13 +3,10 @@ from django.urls import path, include
 
 from django.http import HttpResponse
 
-
-def home(request):
-    return HttpResponse("Hello, world. This is a django boilerplate!")
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
-    path("", home, name="home"),
+    path("", include("todo.urls")),  #n i.e. if the URL path is empty, it will be handled in "todo" folder 
+
+    # path("", home, name="home"),
 ]
