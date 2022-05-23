@@ -3,12 +3,14 @@ from allauth.account.forms import SignupForm
 from .models import Task
 from .forms import TaskForm
 
+from django.views.decorators.http import require_POST
+
 
 def home(request):
 
     # if we have a GET request
     if request.method == "GET":
-        
+
         if request.user.is_authenticated:
             tasks = Task.objects.filter(user=request.user)
         else:
@@ -56,3 +58,23 @@ def home(request):
 
 def auth(request):
     return render(request, "components/auth.html")
+
+@require_POST
+def complete(request, task_id):
+    task = Task.objects.get(id=task_id)
+    if task.done == True:
+        task.done = False
+    else:
+        task.done = True
+    task.save()
+    tasks = Task.objects.filter(user=request.user)
+    # our tasks components needs a form, tasks, and errors to render
+    return render(
+        request,
+        "components/tasks.html",
+        {
+            "form": TaskForm(),
+            "tasks": tasks,
+            "errors": None,
+        },
+    )
